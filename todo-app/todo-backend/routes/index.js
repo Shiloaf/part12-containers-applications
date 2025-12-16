@@ -1,4 +1,6 @@
 const express = require('express');
+const redis = require('../redis')
+const { Todo } = require('../mongo')
 const router = express.Router();
 
 const configs = require('../util/config')
@@ -13,6 +15,16 @@ router.get('/', async (req, res) => {
     ...configs,
     visits
   });
+});
+
+router.get('/statistics', async (req, res) => {
+  const added_todos = Number(await redis.getAsync('added_todos'))
+  if (!added_todos) {
+    redis.setAsync('added_todos', 0)
+  }
+  res.send({
+    added_todos
+  })
 });
 
 module.exports = router;
