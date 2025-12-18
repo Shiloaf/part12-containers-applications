@@ -32,7 +32,7 @@ const findByIdMiddleware = async (req, res, next) => {
 /* DELETE todo. */
 singleRouter.delete('/', async (req, res) => {
   await req.todo.delete()
-  redis.setAsync('added_todos', Number(await redis.getAsync('added_todos')) - 1)  
+  redis.setAsync('added_todos', Number(await redis.getAsync('added_todos')) - 1)
   res.sendStatus(200);
 });
 
@@ -43,7 +43,7 @@ singleRouter.get('/', async (req, res) => {
 
 /* PUT todo. */
 singleRouter.put('/', async (req, res) => {
-  req.todo.text = req.body.text
+  req.todo.text = req.body.text || req.todo.text
   req.todo.done = req.body.done || false
   await req.todo.save()
   res.send(req.todo);
