@@ -1,25 +1,24 @@
 import React, { useState } from "react";
+import { useCreateTodoMutation } from "../store/apiSlice";
 
-const TodoForm = ({
-  createTodo,
-}: {
-  createTodo: ({ text }: { text: string }) => Promise<void>;
-}) => {
+const TodoForm = () => {
   const [text, setText] = useState("");
+  const [createTodo] = useCreateTodoMutation();
 
-  const onChange = ({ target }: { target: HTMLInputElement }) => {
-    setText(target.value);
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    await createTodo(text);
     setText("");
-    createTodo({ text });
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="text" value={text} onChange={onChange} />
+      <input
+        type="text"
+        name="text"
+        value={text}
+        onChange={({ target }) => setText(target.value)}
+      />
       <button type="submit"> Submit </button>
     </form>
   );

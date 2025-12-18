@@ -1,26 +1,22 @@
 import React from "react";
 
-import { Todo } from "../types";
+import {
+  useGetTodosQuery,
+  useDeleteTodoMutation,
+  useCompleteTodoMutation,
+} from "../store/apiSlice";
 
-const TodoList = ({
-  todos,
-  deleteTodo,
-  completeTodo,
-}: {
-  todos: Todo[];
-  deleteTodo: (todo: Todo) => void;
-  completeTodo: (todo: Todo) => void;
-}) => {
-  const onClickDelete = (todo: Todo) => () => {
-    deleteTodo(todo);
-  };
+const TodoList = () => {
+  const { data: todos, isLoading } = useGetTodosQuery();
+  const [deleteTodo] = useDeleteTodoMutation();
+  const [completeTodo] = useCompleteTodoMutation();
 
-  const onClickComplete = (todo: Todo) => () => {
-    completeTodo(todo);
-  };
+  if (!todos || isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <>
+    <ul>
       {todos.length > 0 &&
         todos
           .map((todo) => {
@@ -28,7 +24,7 @@ const TodoList = ({
               <>
                 <span>This todo is done</span>
                 <span>
-                  <button onClick={onClickDelete(todo)}> Delete </button>
+                  <button onClick={() => deleteTodo(todo._id)}> Delete </button>
                 </span>
               </>
             );
@@ -37,14 +33,17 @@ const TodoList = ({
               <>
                 <span>This todo is not done</span>
                 <span>
-                  <button onClick={onClickDelete(todo)}> Delete </button>
-                  <button onClick={onClickComplete(todo)}> Set as done </button>
+                  <button onClick={() => deleteTodo(todo._id)}> Delete </button>
+                  <button onClick={() => completeTodo(todo._id)}>
+                    {" "}
+                    Set as done{" "}
+                  </button>
                 </span>
               </>
             );
 
             return (
-              <div
+              <li
                 key={todo._id}
                 style={{
                   display: "flex",
@@ -55,14 +54,14 @@ const TodoList = ({
               >
                 <span>{todo.text}</span>
                 {todo.done ? doneInfo : notDoneInfo}
-              </div>
+              </li>
             );
           })
           .reduce(
             (acc, cur) => [...acc, <hr key={acc.length} />, cur],
             [] as React.ReactElement[],
           )}
-    </>
+    </ul>
   );
 };
 
