@@ -1,12 +1,12 @@
-import List from "./List";
-import Form from "./Form";
+import TodoList from "./TodoList";
+import TodoForm from "./TodoForm";
 
 const TodoView = () => {
   return (
     <>
       <h1>Todos</h1>
-      <Form />
-      <List />
+      <TodoForm />
+      <TodoList />
     </>
   );
 };
