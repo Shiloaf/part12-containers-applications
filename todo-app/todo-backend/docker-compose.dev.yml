@@ -11,6 +11,11 @@ services:
     volumes:
       - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
       - dev_mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "echo", "'db.runCommand({ ping: 1 }).ok'", "|", "mongo"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   redis:
     image: redis
@@ -20,6 +25,11 @@ services:
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - dev_redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
   app:
     build: .
@@ -32,6 +42,11 @@ services:
     volumes:
       - ./:/usr/src/app:cached
       - /usr/src/app/node_modules
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 volumes:
   dev_mongo_data:

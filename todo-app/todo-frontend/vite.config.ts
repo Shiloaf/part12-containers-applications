@@ -12,6 +12,7 @@ const testConfig = defineConfig({
     globals: true,
     environment: "jsdom",
     setupFiles: "./tests/setupTests.ts",
+    bail: 1,
   },
 });
 
