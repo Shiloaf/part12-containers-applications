@@ -1,8 +1,15 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import type { Todo } from "../types";
 
+const url =
+  import.meta.env.VITE_USE_PROXY === "yes"
+    ? "/api"
+    : import.meta.env.VITE_BACKEND_URL;
+
 export const apiSlice = createApi({
-  baseQuery: fetchBaseQuery({ baseUrl: import.meta.env.VITE_BACKEND_URL }),
+  baseQuery: fetchBaseQuery({
+    baseUrl: url,
+  }),
   tagTypes: ["Todo"],
   endpoints: (builder) => ({
     getTodos: builder.query<Todo[], void>({

@@ -1,0 +1,61 @@
+services:
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - 3456:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: the_username
+      MONGO_INITDB_ROOT_PASSWORD: the_password
+      MONGO_INITDB_DATABASE: the_database
+    volumes:
+      - ./todo-backend/mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "echo", "'db.runCommand({ ping: 1 }).ok'", "|", "mongo"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  redis:
+    image: redis
+    restart: always
+    ports:
+      - 6379:6379
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  backend:
+    build: 
+      context: todo-backend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      MONGO_URL: mongodb://the_username:${MONGODB_PASSWORD}@mongo:27017/the_database
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      mongo:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  frontend:
+    build:
+      context: todo-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:80
+    depends_on:
+      backend:
+        condition: service_started
+
+volumes:
+  mongo_data:
+  redis_data:

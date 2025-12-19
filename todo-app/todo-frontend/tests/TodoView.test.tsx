@@ -1,3 +1,5 @@
+import "@testing-library/jest-dom";
+import { fetchMock } from "./setupTests";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithStore } from "./App.test";

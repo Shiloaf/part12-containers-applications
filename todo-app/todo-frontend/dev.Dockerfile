@@ -6,6 +6,6 @@ COPY . .
 
 RUN npm install
 
-ENV VITE_BACKEND_URL=http://localhost:3000
+ENV VITE_USE_PROXY=yes
 
 CMD ["npm", "run", "dev", "--", "--host"]

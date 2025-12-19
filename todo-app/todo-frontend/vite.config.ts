@@ -5,6 +5,15 @@ import react from "@vitejs/plugin-react";
 
 const config = defineConfigVite({
   plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        target: process.env.VITE_BACKEND_URL,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });
 
 const testConfig = defineConfig({
